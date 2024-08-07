@@ -46,7 +46,10 @@ module ddr3_core
     ,input           cfg_enable_i
     ,input           cfg_stb_i
     ,input  [ 31:0]  cfg_data_i
-    ,input  [ 15:0]  inport_wr_i
+    /* TODO:maxhpc */
+    ,input           inport_wr_i
+    ,input  [ 15:0]  inport_wr_mask_i
+    /**/
     ,input           inport_rd_i
     ,input  [ 31:0]  inport_addr_i
     ,input  [127:0]  inport_write_data_i
@@ -106,9 +109,9 @@ localparam CMD_ZQCL          = 4'b0110;
 // - CL=6
 // - AL=0
 // - CWL=6
-localparam MR0_REG           = 15'h0120;
+localparam MR0_REG           = 15'h0320;
 localparam MR1_REG           = 15'h0001;
-localparam MR2_REG           = 15'h0008;
+localparam MR2_REG           = 15'h0000;
 localparam MR3_REG           = 15'h0000;
 
 // SM states
@@ -129,7 +132,10 @@ localparam ALL_BANKS         = 10;
 // External Interface
 //-----------------------------------------------------------------
 wire [ 31:0]  ram_addr_w       = inport_addr_i;
-wire [ 15:0]  ram_wr_w         = inport_wr_i;
+/* TODO:maxhpc */
+wire          ram_wr_w         = inport_wr_i;
+wire [ 15:0]  ram_wr_mask_w    = inport_wr_mask_i;
+/**/
 wire          ram_rd_w         = inport_rd_i;
 wire          ram_accept_w;
 wire [127:0]  ram_write_data_w = inport_write_data_i;
@@ -137,7 +143,9 @@ wire [127:0]  ram_read_data_w;
 wire          ram_ack_w;
 
 wire          id_fifo_space_w;
-wire          ram_req_w     = ((ram_wr_w != 16'b0) | ram_rd_w) && id_fifo_space_w;
+/* TODO:maxhpc */
+wire          ram_req_w = (ram_wr_w || ram_rd_w) && id_fifo_space_w;
+/**/
 
 assign inport_ack_o       = ram_ack_w;
 assign inport_read_data_o = ram_read_data_w;
@@ -581,7 +589,9 @@ u_seq
     ,.accept_o(cmd_accept_w)
 
     ,.wrdata_i(ram_write_data_w)
-    ,.wrdata_mask_i(~ram_wr_w)
+    /* TODO:maxhpc */
+    ,.wrdata_mask_i(~ram_wr_mask_w)
+    /**/
 
     ,.rddata_valid_o(sdram_rd_valid_w)
     ,.rddata_o(sdram_data_in_w)

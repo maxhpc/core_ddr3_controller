@@ -192,7 +192,10 @@ u_retime
 // AXI Interface
 //-----------------------------------------------------------------
 wire [ 31:0]  ram_addr_w;
-wire [ 15:0]  ram_wr_w;
+/* TODO:maxhpc */
+wire          ram_wr_w;
+wire [ 15:0]  ram_wr_mask_w;
+/**/
 wire          ram_rd_w;
 wire          ram_accept_w;
 wire [127:0]  ram_write_data_w;
@@ -240,7 +243,10 @@ u_axi
     // RAM interface
     .ram_addr_o(ram_addr_w),
     .ram_accept_i(ram_accept_w),
+    /* TODO:maxhpc */
     .ram_wr_o(ram_wr_w),
+    .ram_wr_mask_o(ram_wr_mask_w),
+    /**/
     .ram_rd_o(ram_rd_w),
     .ram_req_id_o(ram_req_id_w),
     .ram_write_data_o(ram_write_data_w),
@@ -264,7 +270,10 @@ u_core
      .clk_i(clk_i)
     ,.rst_i(rst_i)
 
+    /* TODO:maxhpc */
     ,.inport_wr_i(ram_wr_w)
+    ,.inport_wr_mask_i(ram_wr_mask_w)
+    /**/
     ,.inport_rd_i(ram_rd_w)
     ,.inport_req_id_i(ram_req_id_w)
     ,.inport_addr_i(ram_addr_w)

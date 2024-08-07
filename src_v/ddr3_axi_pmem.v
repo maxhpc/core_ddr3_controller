@@ -62,7 +62,10 @@ module ddr3_axi_pmem
     ,output [  1:0]  axi_rresp_o
     ,output [  3:0]  axi_rid_o
     ,output          axi_rlast_o
-    ,output [ 15:0]  ram_wr_o
+    /* TODO:maxhpc */
+    ,output          ram_wr_o
+    ,output [ 15:0]  ram_wr_mask_o
+    /**/
     ,output          ram_rd_o
     ,output [ 31:0]  ram_addr_o
     ,output [127:0]  ram_write_data_o
@@ -387,7 +390,7 @@ u_request
 
     // Input
     .data_in_i({ram_req_id_w, ram_write_data_w, ram_addr_w, ram_rd_w, ram_wr_w}),
-    .push_i((|ram_wr_w) || ram_rd_w),
+    .push_i(((|ram_wr_w) || wr_q && wr_last_q) || ram_rd_w),
     .accept_o(ram_accept_w),
 
     // Output
@@ -397,7 +400,10 @@ u_request
 );
 
 assign ram_rd_o = ram_valid_out_w       & ram_rd_out_w;
-assign ram_wr_o = {16{ram_valid_out_w}} & ram_wr_out_w;
+/* TODO:maxhpc */
+assign ram_wr_o = ram_valid_out_w && !ram_rd_out_w;
+assign ram_wr_mask_o = ram_wr_out_w;
+/**/
 
 //-----------------------------------------------------------------
 // Response state
